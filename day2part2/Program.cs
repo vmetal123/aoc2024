@@ -9,22 +9,42 @@ foreach (var line in lines)
         .Select(x => int.Parse(x))
         .ToList();
 
+
+    if (IsSafe(parts))
+    {
+        safeReportsCount++;
+    }
+    else
+    {
+        for (int i = 0; i < parts.Count; i++)
+        {
+            var backup = parts.ToList();
+            backup.RemoveAt(i);
+
+            if (IsSafe(backup))
+            {
+                safeReportsCount++;
+                break;
+            }
+        }
+    }
+}
+
+bool IsSafe(List<int> parts)
+{
     bool isDecreasingOrder = parts[0] > parts[1];
-    bool isSafe = true;
     var first = parts[0];
 
     for (int i = 1; i < parts.Count; i++)
     {
         if (isDecreasingOrder && first < parts[i])
         {
-            isSafe = false;
-            break;
+            return false;
         }
 
         if (!isDecreasingOrder && first > parts[i])
         {
-            isSafe = false;
-            break;
+            return false;
         }
 
         var difference = isDecreasingOrder
@@ -32,13 +52,12 @@ foreach (var line in lines)
             : parts[i] - first;
         if (difference < 1 || difference > 3)
         {
-            isSafe = false;
-            break;
+            return false;
         }
         first = parts[i];
     }
-    if (isSafe)
-        safeReportsCount++;
+
+    return true;
 }
 
 Console.WriteLine(safeReportsCount);
